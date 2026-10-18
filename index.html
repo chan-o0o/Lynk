@@ -35,7 +35,69 @@
 </div></section></main><script>
 const landing=document.getElementById('landing'),demo=document.getElementById('demo'),empty=document.getElementById('empty'),loading=document.getElementById('loading'),draft=document.getElementById('draft'),done=document.getElementById('done'),mail=document.getElementById('mail');
 const D={a:[['논의 조건','숏폼 2편'],['제안서 전달','금요일'],['확인할 내용','제작 일정']],b:[['핵심 채널','Instagram · YouTube'],['1차 소재','다음 주 수요일'],['남은 일','예산 최종 확인']],c:[['공동 일정','6월 첫째 주'],['전달 자료','브랜드 가이드'],['남은 일','담당자 확정']]};const ctx=document.getElementById('ctx');function rows(k){ctx.innerHTML=D[k].map(x=>`<div class="row"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('')}rows('a');
-document.getElementById('start').onclick=()=>{landing.style.display='none';demo.classList.add('active');window.scrollTo(0,0)};document.getElementById('back').onclick=()=>{demo.classList.remove('active');landing.style.display='block';window.scrollTo(0,0)};
-document.querySelectorAll('.meet').forEach(x=>x.onclick=()=>{document.querySelectorAll('.meet').forEach(y=>y.classList.remove('selected'));x.classList.add('selected');rows(x.dataset.k);empty.style.display='block';loading.classList.remove('active');draft.classList.remove('active');done.classList.remove('active')});
-document.getElementById('make').onclick=()=>{empty.style.display='none';draft.classList.remove('active');done.classList.remove('active');loading.classList.add('active');setTimeout(()=>{loading.classList.remove('active');draft.classList.add('active');draft.scrollIntoView({behavior:'smooth',block:'start'})},750)};document.getElementById('edit').onclick=()=>{mail.contentEditable='true';mail.focus()};document.getElementById('approve').onclick=()=>{draft.classList.remove('active');done.classList.add('active')};document.getElementById('again').onclick=()=>{done.classList.remove('active');empty.style.display='block'};
+// Funnel analytics: send named events to both GA4 and Microsoft Clarity.
+function trackEvent(name, params = {}) {
+  if (typeof gtag === 'function') gtag('event', name, params);
+  if (typeof clarity === 'function') clarity('event', name);
+}
+
+document.getElementById('start').onclick=()=>{
+  trackEvent('demo_start');
+  landing.style.display='none';
+  demo.classList.add('active');
+  window.scrollTo(0,0);
+};
+
+document.getElementById('back').onclick=()=>{
+  trackEvent('demo_back');
+  demo.classList.remove('active');
+  landing.style.display='block';
+  window.scrollTo(0,0);
+};
+
+document.querySelectorAll('.meet').forEach(x=>x.onclick=()=>{
+  trackEvent('meeting_select',{meeting:x.dataset.k});
+  document.querySelectorAll('.meet').forEach(y=>y.classList.remove('selected'));
+  x.classList.add('selected');
+  rows(x.dataset.k);
+  empty.style.display='block';
+  loading.classList.remove('active');
+  draft.classList.remove('active');
+  done.classList.remove('active');
+});
+
+document.getElementById('make').onclick=()=>{
+  const selected=document.querySelector('.meet.selected');
+  const meeting=selected ? selected.dataset.k : 'unknown';
+  trackEvent('generate_click',{meeting});
+  empty.style.display='none';
+  draft.classList.remove('active');
+  done.classList.remove('active');
+  loading.classList.add('active');
+
+  setTimeout(()=>{
+    loading.classList.remove('active');
+    draft.classList.add('active');
+    trackEvent('draft_view',{meeting});
+    draft.scrollIntoView({behavior:'smooth',block:'start'});
+  },750);
+};
+
+document.getElementById('edit').onclick=()=>{
+  trackEvent('draft_edit');
+  mail.contentEditable='true';
+  mail.focus();
+};
+
+document.getElementById('approve').onclick=()=>{
+  trackEvent('demo_complete');
+  draft.classList.remove('active');
+  done.classList.add('active');
+};
+
+document.getElementById('again').onclick=()=>{
+  trackEvent('demo_restart');
+  done.classList.remove('active');
+  empty.style.display='block';
+};
 </script></body></html>
