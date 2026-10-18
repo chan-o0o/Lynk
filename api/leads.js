@@ -1,4 +1,5 @@
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SUPABASE_URL = 'https://xuhmjhbjfhyhmkdihxtj.supabase.co';
 
 module.exports = async function handler(request, response) {
   response.setHeader('Cache-Control', 'no-store');
@@ -16,14 +17,13 @@ module.exports = async function handler(request, response) {
       return response.status(400).json({ ok: false, error: 'Invalid submission' });
     }
 
-    const supabaseUrl = process.env.SUPABASE_URL?.replace(/\/$/, '');
     const secretKey = process.env.SUPABASE_SECRET_KEY;
 
-    if (!supabaseUrl || !secretKey) {
-      throw new Error('Supabase environment variables are missing');
+    if (!secretKey) {
+      throw new Error('SUPABASE_SECRET_KEY is missing');
     }
 
-    const supabaseResponse = await fetch(`${supabaseUrl}/rest/v1/leads`, {
+    const supabaseResponse = await fetch(`${SUPABASE_URL}/rest/v1/leads`, {
       method: 'POST',
       headers: {
         apikey: secretKey,

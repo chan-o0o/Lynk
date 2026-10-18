@@ -27,25 +27,21 @@ grant insert on table public.leads to service_role;
 
 브라우저에서 Supabase를 직접 호출하지 않고 Vercel 서버만 쓰기 때문에, 공개 사용자에게는 테이블 권한을 부여하지 않습니다.
 
-## 3. URL과 서버 비밀키 확인하기
+## 3. 서버 비밀키 확인하기
 
-Supabase 프로젝트에서 다음 값을 확인합니다.
+Project URL은 사이트 코드에 이미 설정되어 있습니다. Supabase 프로젝트의 **Settings → API Keys**에서 `sb_secret_`로 시작하는 새 Secret key를 생성하거나 복사합니다.
 
-- **Project URL:** 프로젝트의 **Connect** 또는 **Integrations → Data API**
-- **Secret key:** **Settings → API Keys**에서 `sb_secret_`로 시작하는 키를 생성하거나 복사
-
-`sb_secret_` 키는 절대 `index.html`, GitHub, 채팅에 붙여 넣지 마세요.
+`sb_secret_` 키는 절대 `index.html`, GitHub, 채팅에 붙여 넣지 마세요. 이미 공개된 키는 삭제하고 새 키를 사용합니다.
 
 ## 4. Vercel 환경변수 등록하기
 
-Vercel의 해당 프로젝트에서 **Settings → Environment Variables**로 이동해 다음 두 값을 등록합니다.
+Vercel의 해당 프로젝트에서 **Settings → Environment Variables**로 이동해 다음 값을 등록합니다.
 
 | 이름 | 값 |
 | --- | --- |
-| `SUPABASE_URL` | Supabase Project URL |
 | `SUPABASE_SECRET_KEY` | `sb_secret_`로 시작하는 Secret key |
 
-두 값 모두 **Production**에 적용하고 저장한 다음 Vercel에서 **Redeploy**합니다. Preview 배포에서도 테스트하려면 Preview에도 적용합니다.
+**Production**에 적용하고 저장한 다음 Vercel에서 **Redeploy**합니다. Preview 배포에서도 테스트하려면 Preview에도 적용합니다.
 
 ## 5. 저장 확인하기
 
