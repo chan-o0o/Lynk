@@ -9,14 +9,22 @@
 3. 조직, 프로젝트 이름, 데이터베이스 비밀번호, Region을 선택하고 프로젝트를 만듭니다.
 4. Free 플랜을 유지합니다. 무료 플랜에서는 카드 등록이 필요하지 않습니다.
 
-## 2. 이메일 테이블 만들기
+## 2. 이메일 테이블 준비하기
 
-프로젝트의 **SQL Editor → New query**에서 아래 SQL 전체를 실행합니다.
+이미 `leads` 테이블을 만들었다면 **SQL Editor → New query**에서 아래 SQL을 실행해 직군 컬럼만 추가합니다.
+
+```sql
+alter table public.leads
+add column if not exists job_role text;
+```
+
+처음 테이블을 만드는 경우에는 아래 SQL 전체를 실행합니다.
 
 ```sql
 create table public.leads (
   id uuid primary key default gen_random_uuid(),
   email text not null check (char_length(email) between 3 and 254),
+  job_role text not null,
   created_at timestamptz not null default now()
 );
 
@@ -48,6 +56,6 @@ Vercel의 해당 프로젝트에서 **Settings → Environment Variables**로 �
 1. 배포된 사이트에서 체험을 완료합니다.
 2. 이메일을 입력하고 개인정보 수집에 동의한 뒤 **이메일 남기기**를 누릅니다.
 3. `이메일이 안전하게 등록되었습니다.`가 표시되는지 확인합니다.
-4. Supabase의 **Table Editor → leads**에서 이메일과 저장 시각을 확인합니다.
+4. Supabase의 **Table Editor → leads**에서 이메일, 직군, 저장 시각을 확인합니다.
 
 오류가 표시되면 Vercel의 **Logs**에서 `Lead submission failed` 메시지를 확인합니다. 가장 흔한 원인은 환경변수 오타, 재배포 누락, 또는 SQL을 실행하지 않은 경우입니다.
